@@ -25,35 +25,31 @@ def fetch_campaign_data(start_date, end_date):
     """
     creds = st.secrets["moengage"]
     
-    # The requests library handles Base64 encoding for you with the auth parameter.
-    username = creds['data_api_id']
-    password = creds['data_api_key']
-    
-    # request set up for headers as per documentation.
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
-        "MOE-APPKEY": creds['app_id']
+        "MOE-APPKEY": creds['app_key'] 
     }
     
-    # Note: start_date and end_date are in YYYY-MM-DD format, not with Z.
     payload = {
         "request_id": "streamlit-dashboard-request-" + datetime.now().isoformat(),
         "start_date": start_date.strftime("%Y-%m-%d"),
         "end_date": end_date.strftime("%Y-%m-%d"),
-        "attribution_type": "CLICK_THROUGH", # Can be changed via a Streamlit filter if needed
-        "metric_type": "TOTAL" # Or "UNIQUE"
+        "attribution_type": "CLICK_THROUGH",
+        "metric_type": "TOTAL"
     }
 
     try:
         response = requests.post(
-            creds['api_base_url'], 
-            headers=headers, 
-            json=payload, 
-            auth=(username, password)
+            creds['api_base_url'],   # e.g. "https://api-03.moengage.com/core-services/v1/campaign-stats"
+            headers=headers,
+            json=payload
         )
         response.raise_for_status()
         data = response.json()
+    
+
+    
         
         # The API returns a dictionary with campaign IDs as keys.
         campaigns = []
@@ -192,3 +188,4 @@ elif dashboard_mode == 'Track Flows':
     
     st.header("Detailed Flow Report")
     st.dataframe(df_processed)
+
