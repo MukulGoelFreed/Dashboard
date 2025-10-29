@@ -4,4 +4,3 @@ requests
 plotly
 datetime
 numpy
-base64
